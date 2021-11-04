@@ -17,7 +17,7 @@ function checksExistsUserAccount(request, response, next) {
   
   // IF user not exists, return error message
   if (!userAlreadyExists) {
-    return response.status(400).json({ "message": "User not exists" })
+    return response.status(400).json({ error: "User not exists" })
   }
   request.user = userAlreadyExists;
   return next();
@@ -30,17 +30,18 @@ app.post('/users', (request, response) => {
   const userAlreadyExists = users.find(user => user.username == username)
   
   if (userAlreadyExists) {
-    return response.status(400).json({ "error": "Username already exists" })
+    return response.status(400).json({ error: "Username already exists" })
   }
 
-  users.push({
+  const user = {
     id: uuidv4(),
     name: name,
     username: username,
     todos: []
-  });
+  };
+  users.push(user);
 
-  return response.status(201).send();
+  return response.status(201).json(user);
 });
 
 app.get('/todos', checksExistsUserAccount, (request, response) => {
