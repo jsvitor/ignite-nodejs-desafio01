@@ -66,7 +66,15 @@ app.post('/todos', checksExistsUserAccount, (request, response) => {
 });
 
 app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  // Atualizar o um ToDo
+  const { title, deadline } = request.body;
+  const { id } = request.params;
+
+  const task = request.user.todos.find(task => task.id == id);
+  console.log(task)
+  task.title = title;
+  task.deadline = new Date(deadline);
+  return response.status(201).json(task);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
