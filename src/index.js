@@ -30,7 +30,7 @@ app.post('/users', (request, response) => {
   const userAlreadyExists = users.find(user => user.username == username)
   
   if (userAlreadyExists) {
-    return response.status(400).json({ "message": "Username already exists" })
+    return response.status(400).json({ "error": "Username already exists" })
   }
 
   users.push({
@@ -71,18 +71,26 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { id } = request.params;
 
   const task = request.user.todos.find(task => task.id == id);
-  console.log(task)
   task.title = title;
   task.deadline = new Date(deadline);
   return response.status(201).json(task);
 });
 
 app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  // Add done to task
+  const { id } = request.params;
+  const task = request.user.todos.find(task => task.id == id);
+  task.done = true;
+
+  return response.status(201).send();
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
-  // Complete aqui
+  // Delete a task
+  const { id } = request.params;
+  const task = request.user.todos.findIndex(task => task.id == id);
+  request.user.todos.splice(task, 1)
+  return response.status(201).send()
 });
 
 module.exports = app;
