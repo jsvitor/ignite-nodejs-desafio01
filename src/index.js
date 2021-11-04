@@ -17,7 +17,7 @@ function checksExistsUserAccount(request, response, next) {
   
   // IF user not exists, return error message
   if (!userAlreadyExists) {
-    return response.status(400).json({ error: "User not exists" })
+    return response.status(404).json({ error: "User not exists." })
   }
   request.user = userAlreadyExists;
   return next();
@@ -72,6 +72,11 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { id } = request.params;
 
   const task = request.user.todos.find(task => task.id == id);
+
+  if (!task) {
+    return response.status(404).json({ error: "Task not exist."})
+  }
+
   task.title = title;
   task.deadline = new Date(deadline);
   return response.status(201).json(task);
@@ -81,17 +86,24 @@ app.patch('/todos/:id/done', checksExistsUserAccount, (request, response) => {
   // Add done to task
   const { id } = request.params;
   const task = request.user.todos.find(task => task.id == id);
+  if (!task) {
+    return response.status(404).json({ error: "Task not exist."})
+  }
+
   task.done = true;
 
-  return response.status(201).send();
+  return response.json(task);
 });
 
 app.delete('/todos/:id', checksExistsUserAccount, (request, response) => {
   // Delete a task
   const { id } = request.params;
   const task = request.user.todos.findIndex(task => task.id == id);
+  if (task) {
+    return response.status(404).json({ error: "Task not exist."})
+  }
   request.user.todos.splice(task, 1)
-  return response.status(201).send()
+  return response.status(204).send()
 });
 
 module.exports = app;
