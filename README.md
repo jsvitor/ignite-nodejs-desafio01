@@ -1,4 +1,4 @@
-# ignite-nodejs-desafio01
+# Rocketseat Ignite NodeJS → Desafio 01
 
 # 💻 Sobre o desafio
 
